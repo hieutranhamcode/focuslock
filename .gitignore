@@ -1,0 +1,13 @@
+# Build artifacts (attach the .app as a zipped Release asset instead of committing it)
+*.app/
+*.zip
+
+# macOS
+.DS_Store
+
+# Backup/runtime files that live outside this repo but might get copied in by mistake
+*.deskflowguard-backup
+*.focuslock-backup
+watcher.log
+watcher.err.log
+config.json
