@@ -1,82 +1,105 @@
-# Cài đặt Deskflow auto-lock cho máy mới
+<p align="center">
+  <img src="docs/logo.png" width="128" height="128" alt="FocusLock logo">
+</p>
 
-Bộ này gồm 2 phần độc lập, phải làm cả 2:
+<h1 align="center">FocusLock</h1>
 
-1. **Deskflow** — cấu hình switchToScreen + lockCursorToScreen theo hotkey F14/F15.
-2. **FocusLock** — app menu bar tự phát hiện game/app và gửi phím F14/F15.
-
----
-
-## Phần 1 — Cài & cấu hình Deskflow trên máy mới
-
-1. Cài Deskflow (deskflow.org) trên máy mới, add vào cùng hệ thống với các máy hiện có (Kiras-Mac-mini, Dragons-Mac-mini...).
-2. Xác định:
-   - `SCREEN_NAME` = tên màn hình Deskflow của máy đang chạy game (chính máy mới này), ví dụ `Kiras-Mac-mini.local`. Xem trong Deskflow GUI → Server → danh sách Screens.
-3. Cấu hình hotkey — có 2 cách:
-
-   **Cách nhanh (khuyến nghị):** cài `FocusLock.app` trước (xem Phần 2), rồi bấm icon khóa trên menu bar → **"Auto-Configure Deskflow Hotkeys"**. App sẽ tự tắt Deskflow, sửa file cấu hình gán đúng phím LOCK/UNLOCK đang dùng (mặc định F14/F15), rồi mở lại Deskflow — không cần làm gì thêm ở bước dưới. Bỏ qua toàn bộ phần "Mở Deskflow GUI..." bên dưới nếu dùng cách này.
-
-   **Cách thủ công:** Mở Deskflow GUI → **Settings → Hotkeys**, tạo 2 hotkey:
-
-   **Hotkey 1 — phím F14**
-   - Action 1: `Switch to screen` → chọn `SCREEN_NAME` (chính máy này)
-   - Action 2: `Lock cursor to screen` → `On`
-
-   **Hotkey 2 — phím F15**
-   - Action 1: `Lock cursor to screen` → `Off`
-
-   > Bấm phím F14/F15 thật trên bàn phím máy đó để Deskflow bắt đúng key code. Dùng F14/F15 (không phải F1/F2) vì 2 phím này không có chức năng mặc định nào trên macOS (F1/F2 bị hệ thống chiếm làm brightness nên không tới được Deskflow).
-
-   **Nếu Deskflow không bắt được phím khi bấm thật** (một số bàn phím không dây/rút gọn, ví dụ NuPhy, gửi F13+ theo kiểu HID mà bộ ghi hotkey của Deskflow không nhận ra): bỏ qua bước ghi bằng tay, sửa thẳng vào file cấu hình sau khi đã **tắt hẳn Deskflow** (cả GUI lẫn process `deskflow-core`, xem Activity Monitor):
-   >
-   > File: `~/Library/Deskflow/Deskflow.conf`, tìm 2 dòng `hotkeys\N\keys\1\key=...` tương ứng với 2 hotkey vừa tạo (dù ghi được hay không, chúng vẫn có mặt trong file), sửa giá trị theo bảng mã Qt key:
-   >
-   > | Phím | Mã Qt (ghi vào Deskflow.conf) |
-   > |------|-------------------------------|
-   > | F13  | 16777276 |
-   > | F14  | 16777277 |
-   > | F15  | 16777278 |
-   > | F16  | 16777279 |
-   >
-   > Ví dụ: hotkey LOCK dùng F14 → `hotkeys\1\keys\1\key=16777277`; hotkey UNLOCK dùng F15 → `hotkeys\2\keys\1\key=16777278`. Lưu file rồi mở lại Deskflow. Cách này không ảnh hưởng gì đến hệ thống tự động (app gửi phím giả lập, không cần bàn phím thật nhận diện được).
-
-4. Áp dụng, khởi động lại Deskflow (kill hẳn qua Activity Monitor rồi mở lại, vì Deskflow hay giữ config cũ trong RAM nếu chỉ đóng cửa sổ).
-5. Cấp quyền cho Deskflow trong **System Settings → Privacy & Security**:
-   - Accessibility ✅
-   - Input Monitoring ✅ (nếu Deskflow yêu cầu)
+<p align="center">
+  A macOS menu bar app that automatically locks your mouse/keyboard to the screen you're gaming on, via <a href="https://deskflow.org">Deskflow</a>.
+</p>
 
 ---
 
-## Phần 2 — Cài FocusLock
+## What it does
 
-1. Tải `FocusLock.app.zip` từ [Releases](https://github.com/hieutranhamcode/focuslock/releases/latest), giải nén, hoặc copy cả thư mục `FocusLock-Setup` (chứa sẵn `FocusLock.app`) sang máy mới.
-2. Kéo `FocusLock.app` vào `/Applications`.
-3. Mở app lần đầu bằng cách **chuột phải → Open** (vì app build ad-hoc, chưa notarize nên macOS sẽ cảnh báo "không xác định nhà phát triển" — chỉ cần làm vậy 1 lần).
-   - Nếu file bị đánh dấu quarantine sau khi AirDrop/tải về (icon menu bar không hiện, hoặc bị chặn ngay), chạy: `xattr -cr /Applications/FocusLock.app` rồi mở lại.
-4. Một icon ổ khóa có hình con trỏ bên trong sẽ hiện trên menu bar (khóa mở = chưa khóa, khóa đóng = đang khóa). Bấm vào đó để mở menu.
-5. Cấp quyền cho app trong **System Settings → Privacy & Security**:
-   - **Accessibility** → thêm `FocusLock` ✅
-   - **Input Monitoring** → thêm `FocusLock` ✅
-   - (Có thể cần tắt/mở lại app sau khi cấp quyền lần đầu: bấm "Quit FocusLock" trong menu rồi mở lại app.)
-6. Trong menu bar, bấm **"Start at Login"** để app tự chạy mỗi khi đăng nhập (không cần LaunchAgent/plist thủ công nữa).
-7. Danh sách game mặc định là Liên Minh Huyền Thoại. Muốn thêm game khác: bấm **"Add App from Applications..."** (chọn file .app) hoặc **"Add Running App"** (chọn từ danh sách app đang mở) — xong ngay, không cần build lại gì cả.
-8. Chưa cấu hình hotkey bên Deskflow? Bấm **"Auto-Configure Deskflow Hotkeys"** — xem chi tiết ở Phần 1.
+If you use [Deskflow](https://deskflow.org) (a Synergy-like KVM) to share one keyboard/mouse across multiple Macs, it's easy to accidentally nudge your mouse onto another screen mid-game. FocusLock fixes that:
 
-Muốn build lại app này từ source (ví dụ máy không tin tưởng file .app có sẵn, hoặc muốn sửa code):
+- Watches one or more apps/games you configure (default: League of Legends).
+- The moment a watched app becomes active, it sends a **LOCK** hotkey; the moment none of them are active anymore, it sends an **UNLOCK** hotkey.
+- Deskflow is configured to bind those two hotkeys to `Switch to screen` + `Lock cursor to screen (on/off)`, so your input stays pinned to the machine you're playing on.
+- Add/remove watched apps straight from the menu bar — no rebuilding, no re-granting permissions.
+- One click auto-configures the Deskflow hotkeys for you (no manual keybinding in Deskflow's GUI required).
+
+This repo contains the full Swift source (`AppSource/main.swift`), a build script, and the setup guide below.
+
+## Requirements
+
+- macOS 13 or later
+- [Deskflow](https://deskflow.org) installed and already sharing your screens
+
+## Install
+
+1. Download `FocusLock.app.zip` from [Releases](https://github.com/hieutranhamcode/focuslock/releases/latest) and unzip it (or clone this repo, which already includes `FocusLock.app`).
+2. Drag `FocusLock.app` into `/Applications`.
+3. Open it the first time via **right-click → Open** (the app is ad-hoc signed, not notarized, so macOS will warn about an "unidentified developer" once).
+   - If macOS quarantines the file after downloading/AirDrop (menu bar icon doesn't appear, or the app is blocked outright), run `xattr -cr /Applications/FocusLock.app` and reopen.
+4. A padlock icon appears in the menu bar (open = unlocked, closed = locked). Click it to open the menu.
+5. Grant permissions in **System Settings → Privacy & Security**:
+   - **Accessibility** → add `FocusLock` ✅
+   - **Input Monitoring** → add `FocusLock` ✅
+   - (You may need to quit and reopen the app after granting permissions for the first time.)
+6. In the menu, enable **"Start at Login"** so it launches automatically (no manual LaunchAgent needed).
+7. The default watch list is League of Legends. To watch something else, use **"Add App from Applications..."** or **"Add Running App"** in the menu — takes effect immediately, no rebuild required.
+
+### Building from source
 
 ```bash
-cd ~/Desktop/FocusLock-Setup   # hoặc nơi copy vào
+git clone https://github.com/hieutranhamcode/focuslock.git
+cd focuslock
 ./build_app.sh
 ```
 
-Script sẽ biên dịch lại từ `AppSource/main.swift` thành `FocusLock.app` (universal binary, chạy được cả Apple Silicon và Intel), tự gắn icon từ `AppSource/Assets/AppIcon.icns`.
+This compiles `AppSource/main.swift` into a universal binary (Apple Silicon + Intel) and packages `FocusLock.app`, embedding the icon from `AppSource/Assets/AppIcon.icns`.
 
-### Kiểm tra hoạt động
+## Configuring Deskflow's hotkeys
 
-Xem log watcher qua menu **"View Log..."**, hoặc trực tiếp:
+FocusLock needs Deskflow's F14/F15 hotkeys wired up to `Switch to screen` + `Lock cursor to screen`. There are two ways to do this — pick one.
 
-```bash
-tail -f ~/Library/Application\ Support/FocusLock/watcher.log
-```
+### Option A: Auto-configure (recommended)
 
-Nếu Deskflow không phản ứng: 99% là do thiếu quyền Accessibility/Input Monitoring, hoặc hotkey F14/F15 trong Deskflow chưa khớp key code thật của bàn phím máy đó (xem mẹo sửa file trực tiếp ở Phần 1).
+Once FocusLock is installed, open its menu and click **"Auto-Configure Deskflow Hotkeys"**. It will:
+
+1. Quit Deskflow.
+2. Edit `~/Library/Deskflow/Deskflow.conf` directly, creating/updating two hotkeys:
+   - **F14 (LOCK):** `Switch to screen` → this machine → `Lock cursor to screen: On`
+   - **F15 (UNLOCK):** `Lock cursor to screen: Off`
+3. Relaunch Deskflow.
+
+The target screen name is read automatically from this machine's own `computerName` in `Deskflow.conf` — whichever Mac you install FocusLock on and run this action on is the screen that gets locked to. A backup of the original file is saved as `Deskflow.conf.focuslock-backup`.
+
+### Option B: Manual setup in Deskflow's GUI
+
+Open Deskflow → **Settings → Hotkeys** and create two hotkeys:
+
+**Hotkey 1 — F14**
+- Action 1: `Switch to screen` → this machine's screen name (see Deskflow → Server → Screens)
+- Action 2: `Lock cursor to screen` → `On`
+
+**Hotkey 2 — F15**
+- Action 1: `Lock cursor to screen` → `Off`
+
+> Press the real F14/F15 keys on that machine's keyboard so Deskflow records the correct key code. F14/F15 are used instead of F1/F2 because macOS reserves F1/F2 for brightness and never lets the keypress reach Deskflow.
+
+**If Deskflow doesn't register the key press** (some compact/wireless keyboards, e.g. NuPhy, send F13+ over a HID path that Deskflow's hotkey recorder doesn't recognize, even though synthetic key events work fine): skip manual recording and edit the config file directly after **fully quitting Deskflow** (GUI + the `deskflow-core` background process — check Activity Monitor):
+
+In `~/Library/Deskflow/Deskflow.conf`, find the two `hotkeys\N\keys\1\key=...` lines for the hotkeys you just created (they exist in the file whether or not the recording worked) and set their value using this table:
+
+| Key  | Qt key code |
+|------|-------------|
+| F13  | 16777276 |
+| F14  | 16777277 |
+| F15  | 16777278 |
+| F16  | 16777279 |
+
+Example: a LOCK hotkey using F14 → `hotkeys\1\keys\1\key=16777277`; an UNLOCK hotkey using F15 → `hotkeys\2\keys\1\key=16777278`. Save and relaunch Deskflow. This doesn't affect the automation at all — FocusLock sends synthetic key events, so the physical keyboard never needs to recognize the key.
+
+After either option, restart Deskflow fully (kill it via Activity Monitor, not just close the window — Deskflow keeps the old config in memory otherwise) and grant it Accessibility (and Input Monitoring, if prompted) in **System Settings → Privacy & Security**.
+
+## Troubleshooting
+
+- **Deskflow doesn't react when a watched app opens/closes:** almost always missing Accessibility/Input Monitoring permission for FocusLock, or Deskflow's F14/F15 hotkey doesn't match the real key code (see the Qt key code table above).
+- **View the watcher log:** menu → **"View Log..."**, or:
+  ```bash
+  tail -f ~/Library/Application\ Support/FocusLock/watcher.log
+  ```
+- **Permissions disappear after rebuilding the app:** macOS revokes TCC grants whenever a binary's code signature changes (true even for ad-hoc signed apps). After running `./build_app.sh` again, remove and re-add FocusLock in Accessibility/Input Monitoring rather than just toggling it off/on.
